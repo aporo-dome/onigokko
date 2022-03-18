@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1,user-scalable=no">
+    <title>Document</title>
+    <style>
+        #jibun {
+            position: absolute;
+            top: 200px;
+            left: 100px;
+        }
+
+        #devil {
+            position: absolute;
+            top: 200px;
+            left: 200px;
+        }
+
+        #apple {
+            position: absolute;
+            top: 200px;
+            left: 200px;
+            display: unset;
+        }
+
+        #area {
+            background-color: #fbf5f5;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #joy1 {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+    <script src="joy.js"></script>
+</head>
+
+<body onload="ok()">
+    <div id="area">
+        <p id="jibun">🙂</p>
+        <p id="devil">😈</p>
+        <p id="apple">🍎</p>
+        <div id="joy1" style="width: 200px; height: 200px;"></div>
+    </div>
+    <script>
+        var screen_width = screen.availWidth;
+        var screen_height = screen.availHeight;
+        var num1 = Math.floor(Math.random() * (screen_width - 10));
+        var num2 = Math.floor(Math.random() * (screen_height - 10));
+        var num3 = Math.floor(Math.random() * (screen_width - 10));
+        var num4 = Math.floor(Math.random() * (screen_height - 250));
+        var jibun_x = 100;
+        var jibun_y = 200;
+        var devil_x = 580;
+        var devil_y = num2;
+        var time = 0;
+        var jibun_speed = 10;
+        var apple_effect = 0.02
+        var music1 = new Audio('syutoku.mp3');
+        //joystick用
+        var joy1X, joy1Y;
+        var Joy1 = new JoyStick('joy1', {
+            internalFillColor: "blue",
+        }, function (stickData) {
+            joy1X = stickData.x;
+            joy1Y = stickData.y;
+            console.log(joy1X, joy1Y);
+        });
+        //areaの範囲
+        document.getElementById("area").style.width = screen_width + "px"
+        document.getElementById("area").style.height = (screen_height - 200) + "px"
+        window.addEventListener("keydown", push_keydown);
+        var timer = setInterval(teiki, 10);
+
+        //定期実行される関数
+        function teiki() {
+            teiki_devil();
+            teiki_atarihantei();
+            teiki_time();
+            teiki_joyugokasu();
+        }
+        //joystickで動かす
+        function teiki_joyugokasu() {
+            if (joy1X < 0 && jibun_x + joy1X * apple_effect > 0) {
+                jibun_x = jibun_x + joy1X * apple_effect;
+            } 30
+            if (joy1Y < 0 && jibun_y - joy1Y * apple_effect < screen_height - 230) {
+                jibun_y = jibun_y - joy1Y * apple_effect;
+            }
+            if (joy1X > 0 && jibun_x + joy1X * apple_effect < screen_width - 20) {
+                jibun_x = jibun_x + joy1X * apple_effect;
+            }
+            if (joy1Y > 0 && jibun_y - joy1Y * apple_effect > -20) {
+                jibun_y = jibun_y - joy1Y * apple_effect;
+            }
+            document.getElementById("jibun").style.top = jibun_y + "px";
+            document.getElementById("jibun").style.left = jibun_x + "px";
+        }
+        //キーボードが押されたとき
+        function push_keydown(event) {
+            var keyCode = event.key;
+            console.log(keyCode);
+            if (keyCode == "w") {
+                if (jibun_y > -15) {
+                    jibun_y = jibun_y - jibun_speed;
+                    document.getElementById("jibun").style.top = jibun_y + "px"
+                }
+            }
+            if (keyCode == "s") {
+                if (jibun_y < screen_height - 20) {
+                    jibun_y = jibun_y + jibun_speed;
+                    document.getElementById("jibun").style.top = jibun_y + "px"
+                }
+            }
+            if (keyCode == "a") {
+                if (jibun_x > 0) {
+                    jibun_x = jibun_x - jibun_speed;
+                    document.getElementById("jibun").style.left = jibun_x + "px"
+                }
+            }
+            if (keyCode == "d") {
+                if (jibun_x < screen_width - 20) {
+                    jibun_x = jibun_x + jibun_speed;
+                    document.getElementById("jibun").style.left = jibun_x + "px"
+                }
+            }
+        }
+        //デビルの動き
+        function teiki_devil() {
+            //time++;
+            //devil_x = devil_x - 2;
+            //円運動
+            // devil_y = Math.sin(time * 0.05) * 100 + jibun_y;
+            // devil_x = Math.cos(time * 0.05) * 100 + jibun_x;
+            var kyori_x = jibun_x - devil_x;
+            var kyori_y = jibun_y - devil_y;
+            var kakudo = Math.atan2(kyori_y, kyori_x);
+            var speed = 0.005 * time;
+            if (speed < 1.2) {
+                devil_x = devil_x + Math.cos(kakudo) * speed;
+                devil_y = devil_y + Math.sin(kakudo) * speed;
+                document.getElementById("devil").style.left = devil_x + "px";
+                document.getElementById("devil").style.top = devil_y + "px";
+            }
+            else {
+                devil_x = devil_x + Math.cos(kakudo) * 1.2;
+                devil_y = devil_y + Math.sin(kakudo) * 1.2;
+                document.getElementById("devil").style.left = devil_x + "px";
+                document.getElementById("devil").style.top = devil_y + "px";
+            }
+            if (devil_x == 0) {
+                devil_x = 580
+            }
+        }
+        //初めの位置
+        function ok() {
+            document.getElementById("devil").style.left = num1 + "px";
+            document.getElementById("devil").style.top = num2 + "px";
+            document.getElementById("apple").style.left = num3 + "px";
+            document.getElementById("apple").style.top = num4 + "px";
+        }
+
+        //当たり判定
+        function teiki_atarihantei() {
+            var ookisa = 15;
+            var okkisa = 50
+            if (jibun_x - devil_x < ookisa && jibun_x - devil_x > ookisa * -1 && jibun_y - devil_y < (ookisa + 5) && jibun_y - devil_y > (ookisa * -1 - 5)) {
+                clearInterval(timer);
+                alert("game over  time:" + time)
+                console.log("syoutotu");
+                //console.log("speed" + jibun_speed);
+            }
+            if (jibun_x - num3 < ookisa && jibun_x - num3 > ookisa * -1 && jibun_y - num4 < (ookisa + 5) && jibun_y - num4 > (ookisa * -1 - 5)) {
+                num3 = 1000;
+                num4 = 1000;
+                document.getElementById("apple").style.display = "none";
+                jibun_speed = jibun_speed + 5;
+                if (apple_effect < 0.05) {
+                    apple_effect = apple_effect * 1.5
+                }
+                music1.play();
+
+            }
+        }
+        //タイマー、スピード
+        function teiki_time() {
+            time = time + 0.5;
+            //console.log(Math.floor(time));
+            if (time % 200 == 0) {
+                apple_appear();
+                if (jibun_speed > 20) {
+                    jibun_speed = jibun_speed - 10
+                }
+                apple_effect = apple_effect * 0.75
+            }
+        }
+        //アップルのランダム生成
+        function apple_appear() {
+            num3 = Math.floor(Math.random() * (screen_width - 10));
+            num4 = Math.floor(Math.random() * (screen_height - 250));
+            document.getElementById("apple").style.left = num3 + "px";
+            document.getElementById("apple").style.top = num4 + "px";
+            document.getElementById("apple").style.display = "unset";
+        }
+    //アナログな感じで移動する！
+    //スティックの色変える
+    //自分が画面外に行かないように！
+    //areaを制限
+    </script>
+</body>
+
+</html>
