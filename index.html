@@ -73,7 +73,7 @@
         }, function (stickData) {
             joy1X = stickData.x;
             joy1Y = stickData.y;
-            console.log(joy1X, joy1Y);
+            //console.log(joy1X, joy1Y);
         });
         //areaの範囲
         document.getElementById("area").style.width = screen_width + "px"
@@ -108,7 +108,7 @@
         //キーボードが押されたとき
         function push_keydown(event) {
             var keyCode = event.key;
-            console.log(keyCode);
+            // console.log(keyCode);
             if (keyCode == "w") {
                 if (jibun_y > -15) {
                     jibun_y = jibun_y - jibun_speed;
@@ -176,7 +176,7 @@
             if (jibun_x - devil_x < ookisa && jibun_x - devil_x > ookisa * -1 && jibun_y - devil_y < (ookisa + 5) && jibun_y - devil_y > (ookisa * -1 - 5)) {
                 clearInterval(timer);
                 alert("game over  time:" + time)
-                console.log("syoutotu");
+                // console.log("syoutotu");
                 //console.log("speed" + jibun_speed);
             }
             if (jibun_x - num3 < ookisa && jibun_x - num3 > ookisa * -1 && jibun_y - num4 < (ookisa + 5) && jibun_y - num4 > (ookisa * -1 - 5)) {
@@ -211,10 +211,6 @@
             document.getElementById("apple").style.top = num4 + "px";
             document.getElementById("apple").style.display = "unset";
         }
-    //アナログな感じで移動する！
-    //スティックの色変える
-    //自分が画面外に行かないように！
-    //areaを制限
     </script>
 </body>
 
