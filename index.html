@@ -175,7 +175,20 @@
             var okkisa = 50
             if (jibun_x - devil_x < ookisa && jibun_x - devil_x > ookisa * -1 && jibun_y - devil_y < (ookisa + 5) && jibun_y - devil_y > (ookisa * -1 - 5)) {
                 clearInterval(timer);
-                alert("game over  time:" + time)
+                //ハイスコアを保存
+                var highscore = load_storage("highscore");
+                console.log(highscore);
+                //キーが見つからない時はnullが入るので、0にする
+                if(highscore == null){
+                    highscore = 0;
+                }
+                if(highscore < time){
+                    //ローカルストレージに保存
+                    save_storage("highscore",time);
+                    alert("Congratulations!!! \n You got first prize.")
+                }
+
+                alert("game over  time:" + time +"\n" +"highscore :" + highscore)
                 // console.log("syoutotu");
                 //console.log("speed" + jibun_speed);
             }
@@ -211,6 +224,20 @@
             document.getElementById("apple").style.top = num4 + "px";
             document.getElementById("apple").style.display = "unset";
         }
+        
+        //localstorageに保存
+        function save_storage(key,value){
+            localStorage.setItem(key,value);
+        }
+
+        //localstorageから読み込む
+        function load_storage(key){
+            var value = localStorage.getItem(key);
+            return value;
+        }
+        //ハイスコアのとき表示
+        //ハイスコアも表示
+        //スマートフォンで確認までする
     </script>
 </body>
 
