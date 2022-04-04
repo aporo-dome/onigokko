@@ -40,6 +40,11 @@
             bottom: 0;
             right: 0;
         }
+        #time {
+            position: absolute;
+            bottom: 200px;
+            left: 20px;
+        }
     </style>
     <script src="joy.js"></script>
 </head>
@@ -49,6 +54,7 @@
         <p id="jibun">🙂</p>
         <p id="devil">😈</p>
         <p id="apple">🍎</p>
+        <div id="time">111</div>
         <div id="joy1" style="width: 200px; height: 200px;"></div>
     </div>
     <script>
@@ -60,7 +66,7 @@
         var num4 = Math.floor(Math.random() * (screen_height - 250));
         var jibun_x = 100;
         var jibun_y = 200;
-        var devil_x = 580;
+        var devil_x = screen_width;
         var devil_y = num2;
         var time = 0;
         var jibun_speed = 10;
@@ -177,18 +183,37 @@
                 clearInterval(timer);
                 //ハイスコアを保存
                 var highscore = load_storage("highscore");
+                var highscore_array = [];
+                highscore_array = load_storage("highscore_array");
                 console.log(highscore);
                 //キーが見つからない時はnullが入るので、0にする
-                if(highscore == null){
+                if (highscore == null) {
                     highscore = 0;
                 }
-                if(highscore < time){
-                    //ローカルストレージに保存
-                    save_storage("highscore",time);
-                    alert("Congratulations!!! \n You got first prize.")
+                if(highscore_array == null){
+                    highscore_array = [0];
                 }
-
-                alert("game over  time:" + time +"\n" +"highscore :" + highscore)
+                var smallestscore = highscore_array[highscore_array.length - 1];
+                //console.log("small " + smallestscore);
+                //highscoreか調べる
+                if (smallestscore < time) {
+                    //ローカルストレージに保存
+                    save_storage("highscore", time);
+                    //最後にタイムを追加
+                    highscore_array.push(time);
+                    //降順に並び替え
+                    highscore_array.sort((a,b) => b - a);
+                    //最後を消す
+                    if(highscore_array.length > 5){
+                        highscore_array.pop();
+                    }
+                    save_storage("highscore_array",highscore_array);
+                    highscore = time;
+                    alert("Congratulations!!! \nYou got first prize. \n\ntime :" + time + "\n" + "highscore :" + highscore);
+                }
+                else {
+                    alert("game over  \n\ntime :" + time + "\n" + "highscore :" + highscore)
+                }
                 // console.log("syoutotu");
                 //console.log("speed" + jibun_speed);
             }
@@ -215,6 +240,7 @@
                 }
                 apple_effect = apple_effect * 0.75
             }
+            document.getElementById("time").innerHTML =time;
         }
         //アップルのランダム生成
         function apple_appear() {
@@ -224,20 +250,23 @@
             document.getElementById("apple").style.top = num4 + "px";
             document.getElementById("apple").style.display = "unset";
         }
-        
+
         //localstorageに保存
-        function save_storage(key,value){
-            localStorage.setItem(key,value);
+        function save_storage(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
         }
 
         //localstorageから読み込む
-        function load_storage(key){
+        function load_storage(key) {
             var value = localStorage.getItem(key);
+            value = JSON.parse(value);
             return value;
         }
-        //ハイスコアのとき表示
-        //ハイスコアも表示
-        //スマートフォンで確認までする
+       //タイムを整数だけにする
+       //初めからハイスコアだけ表示
+       //アイコンでタイムとハイスコアを表す
+       //トップ５に入った時も表示（アラートでいい）
+       //highscoreを消すけど動かせるように(余力あれば)
     </script>
 </body>
 
