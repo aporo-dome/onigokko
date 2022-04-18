@@ -40,10 +40,29 @@
             bottom: 0;
             right: 0;
         }
+
         #time {
             position: absolute;
-            bottom: 200px;
-            left: 20px;
+            bottom: 160px;
+            left: 45px;
+        }
+
+        #score {
+            position: absolute;
+            bottom: 140px;
+            left: 45px;
+        }
+
+        #crown {
+            position: absolute;
+            bottom: 126.5px;
+            left: 15px;
+        }
+
+        #you {
+            position: absolute;
+            bottom: 145.5px;
+            left: 15px;
         }
     </style>
     <script src="joy.js"></script>
@@ -54,6 +73,9 @@
         <p id="jibun">🙂</p>
         <p id="devil">😈</p>
         <p id="apple">🍎</p>
+        <p id="crown">👑:</p>
+        <p id="you">👶:</p>
+        <div id="score">no record</div>
         <div id="time">111</div>
         <div id="joy1" style="width: 200px; height: 200px;"></div>
     </div>
@@ -86,6 +108,9 @@
         document.getElementById("area").style.height = (screen_height - 200) + "px"
         window.addEventListener("keydown", push_keydown);
         var timer = setInterval(teiki, 10);
+
+        var highscore1 = load_storage("highscore_array");
+        document.getElementById("score").innerHTML = highscore1[0];
 
         //定期実行される関数
         function teiki() {
@@ -182,34 +207,36 @@
             if (jibun_x - devil_x < ookisa && jibun_x - devil_x > ookisa * -1 && jibun_y - devil_y < (ookisa + 5) && jibun_y - devil_y > (ookisa * -1 - 5)) {
                 clearInterval(timer);
                 //ハイスコアを保存
-                var highscore = load_storage("highscore");
                 var highscore_array = [];
                 highscore_array = load_storage("highscore_array");
-                console.log(highscore);
+                var highscore = highscore_array[0];
+                //console.log(highscore_array);
                 //キーが見つからない時はnullが入るので、0にする
                 if (highscore == null) {
                     highscore = 0;
                 }
-                if(highscore_array == null){
+                if (highscore_array == null || highscore_array.length === undefined) {
                     highscore_array = [0];
                 }
+                //console.log("length" + highscore_array.length)
                 var smallestscore = highscore_array[highscore_array.length - 1];
                 //console.log("small " + smallestscore);
-                //highscoreか調べる
+                ///highscoreか調べる
                 if (smallestscore < time) {
-                    //ローカルストレージに保存
-                    save_storage("highscore", time);
                     //最後にタイムを追加
                     highscore_array.push(time);
                     //降順に並び替え
-                    highscore_array.sort((a,b) => b - a);
+                    highscore_array.sort((a, b) => b - a);
                     //最後を消す
-                    if(highscore_array.length > 5){
+                    if (highscore_array.length > 5) {
                         highscore_array.pop();
                     }
-                    save_storage("highscore_array",highscore_array);
-                    highscore = time;
-                    alert("Congratulations!!! \nYou got first prize. \n\ntime :" + time + "\n" + "highscore :" + highscore);
+                    save_storage("highscore_array", highscore_array);
+                    //今回がハイスコアなら今回のを使う
+                    if (highscore < time) {
+                        highscore = time;
+                    }
+                    alert("Congratulations!!! \nYou got  a nice score. \n\ntime :" + time + "\n" + "highscore :" + highscore);
                 }
                 else {
                     alert("game over  \n\ntime :" + time + "\n" + "highscore :" + highscore)
@@ -231,16 +258,16 @@
         }
         //タイマー、スピード
         function teiki_time() {
-            time = time + 0.5;
+            time = time + 1
             //console.log(Math.floor(time));
-            if (time % 200 == 0) {
+            if (time % 400 == 0) {
                 apple_appear();
                 if (jibun_speed > 20) {
                     jibun_speed = jibun_speed - 10
                 }
                 apple_effect = apple_effect * 0.75
             }
-            document.getElementById("time").innerHTML =time;
+            document.getElementById("time").innerHTML = time;
         }
         //アップルのランダム生成
         function apple_appear() {
